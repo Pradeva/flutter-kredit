@@ -1,8 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:itdp/dashboard_screen.dart';
 import 'register_screen.dart';
-import 'dashboard_screen.dart';
+
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -21,7 +22,7 @@ class _LoginScreenState extends State<LoginScreen> {
     isLoading = true;
   });
 
-  final String apiUrl = "https://c0ce-210-210-144-170.ngrok-free.app/users/login";
+  final String apiUrl = "https://41c0-210-210-144-170.ngrok-free.app/users/login";
 
   try {
     final response = await http.post(
@@ -52,9 +53,10 @@ class _LoginScreenState extends State<LoginScreen> {
             SnackBar(content: Text("Login Berhasil: ${data['message']}")),
           );
           Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const DashboardScreen()),
-          );
+  context,
+  MaterialPageRoute(builder: (context) => const RegisterScreen()),
+);
+
         } else {
           throw Exception("Login gagal: ${newResponse.body}");
         }
@@ -64,10 +66,11 @@ class _LoginScreenState extends State<LoginScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Login Berhasil: ${data['message']}")),
       );
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const DashboardScreen()),
-      );
+Navigator.pushReplacement(
+  context,
+  MaterialPageRoute(builder: (context) => const DashboardScreen()),
+);
+
     } else {
       throw Exception("Login gagal: ${response.body}");
     }

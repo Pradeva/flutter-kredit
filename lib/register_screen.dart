@@ -16,23 +16,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  final FocusNode phoneFocusNode = FocusNode();
-  bool isPhoneFocused = false;
-
   bool isLoading = false;
   bool isPasswordVisible = false;
   bool isEmailValid = false;
   bool isPasswordValid = false;
-
-  @override
-  void initState() {
-    super.initState();
-    phoneFocusNode.addListener(() {
-      setState(() {
-        isPhoneFocused = phoneFocusNode.hasFocus;
-      });
-    });
-  }
 
   void validateInputs() {
     setState(() {
@@ -52,17 +39,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
     try {
       String rawPhone = phoneController.text.trim();
 
-      // Pastikan format +62
-      String formattedPhone = rawPhone.startsWith('+62')
-          ? rawPhone
-          : '+62${rawPhone.replaceFirst(RegExp(r'^0+'), '')}';
+      // 🔧 Format phone jadi 081xxx (remove +62/62)
+      String formattedPhone;
+      if (rawPhone.startsWith('+62')) {
+        formattedPhone = rawPhone.replaceFirst('+62', '0');
+      } else if (rawPhone.startsWith('62')) {
+        formattedPhone = rawPhone.replaceFirst('62', '0');
+      } else {
+        formattedPhone = rawPhone; // Sudah 08xxx
+      }
 
       final requestBody = {
         "email": emailController.text.trim(),
         "password": passwordController.text.trim(),
         "name": nameController.text.trim(),
+        "phone": formattedPhone,  // ✅ Dikirim sebagai 081xxx
         "role": 2,
-        "phone": formattedPhone,  // ✅ Dikirim ke backend
       };
 
       final response = await http.post(
@@ -165,15 +157,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     const SizedBox(height: 16),
                     TextField(
                       controller: phoneController,
-                      focusNode: phoneFocusNode,
                       keyboardType: TextInputType.phone,
-                      decoration: isPhoneFocused
-                          ? customInputDecoration("").copyWith(
-                              prefixText: "+62 ",
-                              prefixStyle: const TextStyle(
-                                  color: Colors.black, fontSize: 16),
-                            )
-                          : customInputDecoration("Phone Number"),
+                      decoration: customInputDecoration("Phone Number"),
                     ),
                     const SizedBox(height: 16),
                     TextField(

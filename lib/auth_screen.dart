@@ -13,14 +13,24 @@ class AuthScreen extends StatelessWidget {
         padding: const EdgeInsets.all(20),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              "EasyFinance",
-              style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-                color: Colors.blue.shade800,
+            ShaderMask(
+              shaderCallback: (Rect bounds) {
+                return const LinearGradient(
+                  colors: [Color.fromARGB(255, 23, 49, 116), Color.fromARGB(255, 1, 22, 70)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ).createShader(bounds);
+              },
+              child: const Text(
+                "Kredana",
+                style: TextStyle(
+                  fontSize: 45,
+                  fontFamily: 'RobotoSerif',
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white, // Warna default, akan digantikan oleh ShaderMask
+                ),
               ),
             ),
             const SizedBox(height: 10),
@@ -28,13 +38,15 @@ class AuthScreen extends StatelessWidget {
               "Let’s get you inside the app!",
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 20),
-            Image.asset("assets/finance_illustration.png", height: 200),
+            const SizedBox(height: 40),
+            Center(
+              child: Image.asset("assets/finance_illustration.png", height: 250),
+            ),
             const SizedBox(height: 20),
             const Text(
               "Easily calculate your loan and make better financial decisions with EasyFinance. Explore various loan options, understand payment plans, and find the best fit for your needs.",
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 14, color: Colors.black54),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10, color: Colors.black54),
             ),
             const SizedBox(height: 30),
             Row(
@@ -61,7 +73,7 @@ class AuthScreen extends StatelessWidget {
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue.shade800,
+                    backgroundColor: Colors.blue,
                     padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
                   ),
                   child: const Text("Login", style: TextStyle(fontSize: 16, color: Colors.white)),

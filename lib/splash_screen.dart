@@ -65,9 +65,10 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                 );
               },
               child: Text(
-                "EasyFinance",
+                "Kredana",  
                 style: TextStyle(
-                  fontSize: 32,
+                  fontSize: 55,
+                  fontFamily: 'RobotoSerif',
                   fontWeight: FontWeight.bold,
                   color: Colors.blue.shade800,
                 ),

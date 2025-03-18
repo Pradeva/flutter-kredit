@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:itdp/dashboard_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'register_screen.dart';
-
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -18,74 +18,95 @@ class _LoginScreenState extends State<LoginScreen> {
   bool isLoading = false; // Untuk indikator loading
 
   Future<void> login() async {
-  setState(() {
-    isLoading = true;
-  });
-
-  final String apiUrl = "https://41c0-210-210-144-170.ngrok-free.app/users/login";
-
-  try {
-    final response = await http.post(
-      Uri.parse(apiUrl),
-      headers: {"Content-Type": "application/json"},
-      body: jsonEncode({
-        "email": emailController.text,
-        "password": passwordController.text,
-      }),
-    );
-
-    if (response.statusCode == 307) {
-      // Ambil lokasi redirect baru
-      String? redirectUrl = response.headers['location'];
-      if (redirectUrl != null) {
-        final newResponse = await http.post(
-          Uri.parse(redirectUrl),
-          headers: {"Content-Type": "application/json"},
-          body: jsonEncode({
-            "email": emailController.text,
-            "password": passwordController.text,
-          }),
-        );
-
-        if (newResponse.statusCode == 200) {
-          final data = jsonDecode(newResponse.body);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Login Berhasil: ${data['message']}")),
-          );
-          Navigator.pushReplacement(
-  context,
-  MaterialPageRoute(builder: (context) => const RegisterScreen()),
-);
-
-        } else {
-          throw Exception("Login gagal: ${newResponse.body}");
-        }
-      }
-    } else if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Login Berhasil: ${data['message']}")),
-      );
-Navigator.pushReplacement(
-  context,
-  MaterialPageRoute(builder: (context) => const DashboardScreen()),
-);
-
-    } else {
-      throw Exception("Login gagal: ${response.body}");
-    }
-  } catch (e) {
     setState(() {
-      isLoading = false;
+      isLoading = true;
     });
-    print("Error: $e");
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Error: ${e.toString()}")),
-    );
+
+    final String apiUrl = "https://41c0-210-210-144-170.ngrok-free.app/users/login";
+
+    try {
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({
+          "email": emailController.text,
+          "password": passwordController.text,
+        }),
+      );
+
+      if (response.statusCode == 307) {
+        // Ambil lokasi redirect baru
+        String? redirectUrl = response.headers['location'];
+        if (redirectUrl != null) {
+          final newResponse = await http.post(
+            Uri.parse(redirectUrl),
+            headers: {"Content-Type": "application/json"},
+            body: jsonEncode({
+              "email": emailController.text,
+              "password": passwordController.text,
+            }),
+          );
+
+          if (newResponse.statusCode == 200) {
+            final data = jsonDecode(newResponse.body);
+            print("Response Data: $data");
+
+            String? userId = data['user']?['id']?.toString();
+            print("User ID: $userId");
+
+            await _saveUserId(userId);
+
+            
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const RegisterScreen()),
+            );
+          } else {
+            throw Exception("Login gagal: ${newResponse.body}");
+          }
+        }
+      } else if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        print("Response Data: $data");
+
+        String? userId = data['user']?['id']?.toString();
+        print("User ID: $userId");
+
+        await _saveUserId(userId);
+
+        
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const DashboardScreen()),
+        );
+      } else {
+        throw Exception("Login gagal: ${response.body}");
+      }
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      print("Error: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error: ${e.toString()}")),
+      );
+    }
   }
-}
 
+  Future<void> _saveUserId(String? userId) async {
+    final prefs = await SharedPreferences.getInstance();
+    if (userId != null) {
+      await prefs.setString('user_id', userId);
+      print("User ID berhasil disimpan: $userId");
+    } else {
+      print("User ID tidak valid, tidak disimpan.");
+    }
+  }
 
+  Future<String?> _getUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('user_id');
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -68,6 +68,7 @@ flutter:
     - assets/news_banner.png
     - assets/calculate_credit.png
     - assets/history_credit.png
+    - assets/eva_checkmark-circle-outline.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

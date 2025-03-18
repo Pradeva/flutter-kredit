@@ -5,7 +5,6 @@ class RequestCreditPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Data Dummy sesuai desain
     final dummyData = {
       "result": "Toyota Innova Zwnix Q",
       "initialPrice": "320.000.000",
@@ -25,7 +24,7 @@ class RequestCreditPage extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Card Box
+              // Card Info
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
@@ -113,7 +112,7 @@ class RequestCreditPage extends StatelessWidget {
     );
   }
 
-  // Widget untuk baris teks
+  // Baris Informasi
   Widget _buildRow(String label, String value, {bool isBold = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
@@ -137,7 +136,7 @@ class RequestCreditPage extends StatelessWidget {
     );
   }
 
-  // Dialog sukses
+  // Pop-up Dialog Sukses
   void showSuccessDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -150,8 +149,12 @@ class RequestCreditPage extends StatelessWidget {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.check_circle_outline,
-                  color: Color(0xFF27AE60), size: 60),
+              // 🔥 GANTI ICON → JADI GAMBAR DARI assets
+              Image.asset(
+                'assets/eva_checkmark-circle-outline.png',
+                width: 60,
+                height: 60,
+              ),
               const SizedBox(height: 16),
               const Text(
                 "The Credit\nApplication Has\nBeen Submitted",
@@ -165,11 +168,12 @@ class RequestCreditPage extends StatelessWidget {
               const SizedBox(height: 24),
               Row(
                 children: [
+                  // Tombol Back Home
                   Expanded(
                     child: OutlinedButton(
                       onPressed: () {
-                        Navigator.pop(context); // Tutup dialog
-                        Navigator.pop(context); // Kembali ke home
+                        Navigator.pop(context);
+                        Navigator.pop(context);
                       },
                       style: OutlinedButton.styleFrom(
                         side: const BorderSide(color: Colors.black),
@@ -182,14 +186,13 @@ class RequestCreditPage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 12),
+                  // Tombol See Progress
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
                         Navigator.pop(context);
-                        // TODO: Navigate ke progress
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text("Go to Progress Page")),
+                          const SnackBar(content: Text("Go to Progress Page")),
                         );
                       },
                       style: ElevatedButton.styleFrom(
